@@ -6,8 +6,14 @@ from pathlib import Path
 import urllib.request
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
+from adblockparser import AdblockRules
 import requests
 import string
+
+
+def isLinkAadd(rules_raw, url):
+    rules   =  AdblockRules(rules_raw)
+    return rules.should_block(url.strip())
 
 def remove_punctuation_except_dot(text):
     # Create a set of punctuation without the dot
@@ -55,7 +61,7 @@ def downloadAttribute(url,outpath):
              
     
        return filename
-def parseUrl(url,outdir,args,filetype=".html"):
+def parseUrl(url,outdir,args,filetype=".html",adblocker_Rules):
     Path(outdir).mkdir(parents=True, exist_ok=True)
    
     braveExe = args.bexe
@@ -88,6 +94,7 @@ def parseUrl(url,outdir,args,filetype=".html"):
         for tag in soup.find_all(["link","script","img"]):
                attr = "src" if tag.name in ["script","img"] else "href"
                link = tag.get(attr) or tag.get("data-src")
+               
 
                if link and not link.startswith("data:"):
                      if is_html_link(link) == False:
@@ -117,6 +124,7 @@ parser.add_argument("--bexe",default="",help="path to the brave executable")
 parser.add_argument("--nHeadless", action="store_false", help="Dont run in headless mode")
 parser.add_argument("--pdf",action="store_true",help="make a pdf of the page")
 parser.add_argument("--screenshot",action="store_true",help="Take a screenshot of the page")
+parser.add_argument("--iAdblock",action="store_true",help="Uses a custom adblocker alongside the brave adblocker")
 args  =  parser.parse_args()
 
 url = args.site
@@ -126,5 +134,15 @@ if url.startswith("http") == False:
         print("Appeneded "+url+" to http://")
         url = "http://"+url
 
+if args.iAdblock:
+      if os.path.exists(os.path.join(outdir,"adblock.txt")):
+            print("Adblock list already exits skipping!")
+      else:
+            adblockerURL = "https://easylist.to/easylist/easylist.txt"
+            print("Downloading EasyList...")
+            response = requests.get(url)
+            rules_raw = response.text.splitlines()
 
-parseUrl(url=url,outdir=outdir,args=args)
+
+
+parseUrl(url=url,outdir=outdir,args=args,adblocker_Rules=rules_raw)
