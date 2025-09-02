@@ -19,7 +19,7 @@ parser.add_argument("--nHeadless", action="store_false", help="Dont run in headl
 parser.add_argument("--pdf",action="store_true",help="make a pdf of the page")
 parser.add_argument("--screenshot",action="store_true",help="Take a screenshot of the page")
 parser.add_argument("--iAdblock",action="store_true",help="Uses a custom adblocker alongside the brave adblocker")
-parser.add_argument("--timeout",default=60000,help="Maximum time it should wait to add the page")
+parser.add_argument("--timeout",default=60000,help="Maximum time it should wait to load the page")
 args  =  parser.parse_args()
 
 url = args.site
