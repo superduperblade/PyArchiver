@@ -17,6 +17,15 @@ class PageArchiver:
         # waits until the page has loaded
         page = browser.new_page()
         print("Sending request to: "+self.url)
-        page.goto(self.url,wait_until="networkidle",timeout=60000)
-        time.sleep(100)
+        page.goto(self.url,wait_until="networkidle",timeout=self.args.timeout)
+        
+
+
+        if self.args.screenshot == True:
+           page.screenshot(path=self.args.outdir,full_page=True)
+        
+        if self.args.pdf == True:
+           page.pdf(path=self.args.outdir)
+
+
 
