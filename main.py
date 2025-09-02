@@ -4,7 +4,7 @@ import urllib
 from urllib.parse import  urlparse, urlunparse
 from pathlib import Path
 import urllib.request
-from playwright.sync_api import sync_playwright
+
 from bs4 import BeautifulSoup
 from adblockparser import AdblockRules
 import requests
@@ -39,7 +39,7 @@ if args.iAdblock:
 
 
 #if brave browser arg is empty attenmpt to find it on the users system (windows only)
-if args.bexe == "":
+if args.bexe == "" or os.path.exists(args.bexe) ==  False:
        brave_path = shutil.which("brave.exe")
        if brave_path == "":
               print("Unable to find it on the users system exiting")
@@ -49,7 +49,7 @@ if args.bexe == "":
 
 
 
-page = PageArchiver(args.site,"./page")
+page = PageArchiver(args.site,args=args)
 
 page.archivePage()
 
