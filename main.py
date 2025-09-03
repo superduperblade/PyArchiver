@@ -39,7 +39,7 @@ if args.iAdblock:
             rules_raw = response.text.splitlines()
 
 
-#if brave browser arg is empty attenmpt to find it on the users system (windows only)
+#if brave browser arg is empty attempt to find it on the users system (windows only)
 if args.bexe == "" or os.path.exists(args.bexe) ==  False:
        brave_path = shutil.which("brave.exe")
        if brave_path == "":

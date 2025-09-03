@@ -1,4 +1,5 @@
 from playwright.sync_api import sync_playwright
+import os
 import time
 class PageArchiver:
     def __init__(self,url,args):
@@ -8,6 +9,11 @@ class PageArchiver:
 
     def archivePage(self):
       args = self.args
+
+      #auto populate
+      filename = "example"
+
+
       with sync_playwright() as play:
         browser = play.chromium.launch(
             headless = args.nHeadless,
@@ -22,11 +28,11 @@ class PageArchiver:
         
 
 
-        if self.args.screenshot == True:
-           page.screenshot(path=args.outdir,full_page=True)
+        if args.screenshot == True:
+           page.screenshot(path=os.path.join(args.outdir,filename+".png"),full_page=True)
         
-        if self.args.pdf == True:
-           page.pdf(path=self.args.outdir)
+        if args.pdf == True:
+           page.pdf(path= os.path.join(args.outdir,filename+".pdf"))
 
 
 
