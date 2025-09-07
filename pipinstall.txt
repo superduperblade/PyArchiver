@@ -2,3 +2,4 @@ adblockparser
 urllib
 BeautifulSoup
 playwright
+sqlite3
