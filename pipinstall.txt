@@ -1,0 +1,4 @@
+adblockparser
+urllib
+BeautifulSoup
+playwright

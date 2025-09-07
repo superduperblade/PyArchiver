@@ -5,7 +5,7 @@ import time
 from pathlib import Path
 import string
 from urllib.parse import urlparse
-
+import sqlite3
 
 class PageArchiver:
     def __init__(self,url,args):
@@ -14,6 +14,19 @@ class PageArchiver:
         self.routeDir = os.path.join(self.args.outdir,"requests")
         Path(self.routeDir).mkdir(parents=True,exist_ok=True)
         self.indicator = 0
+
+    def create_database(self,path):
+     connection = sqlite3.connect(path)
+     self.cursor = connection.cursor()
+
+     sql_create_command = '''
+     CREATE TABLE IF NOT EXISTS WEBSITE(ID interger primary key ,
+     URL text,
+     headers text,
+     body text,
+     status interger
+     )'''
+     self.cursor.execute(sql_create_command)
 
     def remove_punctuation_except_dot(text):
      punctuation_to_remove = string.punctuation.replace('.', '')
@@ -27,7 +40,7 @@ class PageArchiver:
    #handles inividual responces 
     # TEMPORARY WILL WRITE TO SQL DATABASE
     def writeResponceToDb(self,url,body,headers,code):
-       with open(os.path.join(self.args.outdir,"db.db"),"a",encoding="utf-8") as file:
+       with open(os.path.join(self.args.outdir,"db.db"),"w",encoding="utf-8") as file:
           file.write(url+":"+str(headers)+":"+str(body)+":"+str(code)+"\n")
 
     def handle_route(self,route: Route) -> None:
@@ -47,8 +60,8 @@ class PageArchiver:
 
        extention = Path(extention.path).suffix
 
-       self.writeResponceToDb(url=url,headers=headers,body=body,code=status)
-       self.writeFile(os.path.join(str(self.routeDir),str(self.indicator)+extention),body)      
+       #self.writeResponceToDb(url=url,headers=headers,body=body,code=status)
+       #self.writeFile(os.path.join(str(self.routeDir),str(self.indicator)+extention),body)      
 
 
 
@@ -65,6 +78,8 @@ class PageArchiver:
 
       #todo auto populate
       filename = "example"
+
+      self.create_database(os.path.join(args.outdir,"db_"+filename+".db"))
 
 
       with sync_playwright() as play:
