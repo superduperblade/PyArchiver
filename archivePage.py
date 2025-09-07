@@ -15,13 +15,15 @@ class PageArchiver:
         Path(self.routeDir).mkdir(parents=True,exist_ok=True)
         self.indicator = 0
 
+   
+
     def create_database(self,path):
-     connection = sqlite3.connect(path)
-     self.cursor = connection.cursor()
+     self.connection = sqlite3.connect(path)
+     self.cursor = self.connection.cursor()
 
      sql_create_command = '''
      CREATE TABLE IF NOT EXISTS WEBSITE(ID interger primary key ,
-     URL text,
+     url text,
      headers text,
      body text,
      status interger
@@ -40,8 +42,12 @@ class PageArchiver:
    #handles inividual responces 
     # TEMPORARY WILL WRITE TO SQL DATABASE
     def writeResponceToDb(self,url,body,headers,code):
-       with open(os.path.join(self.args.outdir,"db.db"),"w",encoding="utf-8") as file:
-          file.write(url+":"+str(headers)+":"+str(body)+":"+str(code)+"\n")
+       
+       sql_insert_command = '''INSERT INTO WEBSITE (url,headers,body,status) values(?,?,?,?)'''
+       self.cursor.execute(sql_insert_command,[url,str(headers),body,code])   
+       self.connection.commit()
+       #with open(os.path.join(self.args.outdir,"db.db"),"w",encoding="utf-8") as file:
+       #   file.write(url+":"+str(headers)+":"+str(body)+":"+str(code)+"\n")
 
     def handle_route(self,route: Route) -> None:
       
@@ -60,7 +66,7 @@ class PageArchiver:
 
        extention = Path(extention.path).suffix
 
-       #self.writeResponceToDb(url=url,headers=headers,body=body,code=status)
+       self.writeResponceToDb(url=url,headers=headers,body=body,code=status)
        #self.writeFile(os.path.join(str(self.routeDir),str(self.indicator)+extention),body)      
 
 
