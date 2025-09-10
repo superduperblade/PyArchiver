@@ -67,7 +67,7 @@ class PageArchiver:
        extention = Path(extention.path).suffix
 
        self.writeResponceToDb(url=url,headers=headers,body=body,code=status)
-       #self.writeFile(os.path.join(str(self.routeDir),str(self.indicator)+extention),body)      
+       self.writeFile(os.path.join(str(self.routeDir),str(self.indicator)+extention),body)      
 
 
 
@@ -111,8 +111,8 @@ class PageArchiver:
 
         #make sure folder exists
         Path(args.outdir).mkdir(parents=True,exist_ok=True)
-        with open(os.path.join(args.outdir,filename+".html"),"w",encoding="utf-8") as file:
-           file.write(html)
+        #with open(os.path.join(args.outdir,filename+".html"),"w",encoding="utf-8") as file:
+         #  file.write(html)
 
 
         if args.screenshot == True:
